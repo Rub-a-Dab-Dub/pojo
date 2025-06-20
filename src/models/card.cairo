@@ -8,7 +8,8 @@ pub struct CommunityCards {
     pub flop3: u8,
     pub turn: u8,
     pub river: u8,
-    pub cards_dealt: u8, // 0=none, 3=flop, 4=turn, 5=river
+    // 0=none, 3=flop, 4=turn, 5=river
+    pub cards_dealt: u8 
 }
 
 #[derive(Copy, Drop, Serde, Debug)]
@@ -18,7 +19,7 @@ pub struct GameDeck {
     pub table_id: u32,
     pub cards: Span<u8>, // Shuffled deck
     pub next_card_index: u8,
-    pub seed: u256, // For reproducible shuffle
+    pub seed: u256
 }
 
 #[derive(Copy, Drop, Serde, PartialEq)]
@@ -28,7 +29,7 @@ pub struct Card {
 }
 
 #[derive(Serde, Copy, Drop, Introspect, PartialEq, Debug)]
-enum CardSuits {
+pub enum CardSuits {
     Spades,
     Hearts,
     Diamonds,
@@ -63,7 +64,7 @@ impl U8TryIntoCardSuits of TryInto<u8, CardSuits> {
 }
 
 #[derive(Serde, Copy, Drop, Introspect, PartialEq, Debug)]
-enum CardRank {
+pub enum CardRank {
     Two,
     Three,
     Four,
@@ -138,12 +139,9 @@ impl U8TryIntoCardRank of TryInto<u8, CardRank> {
 pub impl CardImpl of CardTrait {
     fn from_index(index: u8) -> Card {
         assert(index < 52, 'Invalid card index');
-        Card {
-            suit: Self::get_card_suit(index),
-            rank: Self::get_card_rank(index),
-        }
+        Card { suit: Self::get_card_suit(index), rank: Self::get_card_rank(index) }
     }
-    
+
     fn to_index(card: Card) -> u8 {
         let suit_value: u8 = card.suit.into();
         let rank_value: u8 = card.rank.into();
@@ -154,12 +152,12 @@ pub impl CardImpl of CardTrait {
         assert(card < 52, 'Invalid card index');
         (card / 13).try_into().unwrap()
     }
-    
+
     fn get_card_rank(card: u8) -> CardRank {
         assert(card < 52, 'Invalid card index');
         (card % 13).try_into().unwrap()
     }
-    
+
     fn card_value(rank: CardRank) -> u8 {
         match rank {
             CardRank::Ace => 14,
@@ -181,7 +179,7 @@ pub impl CardImpl of CardTrait {
     fn is_ace(rank: CardRank) -> bool {
         rank == CardRank::Ace
     }
-    
+
     fn is_face_card(rank: CardRank) -> bool {
         match rank {
             CardRank::Jack | CardRank::Queen | CardRank::King => true,
@@ -189,9 +187,9 @@ pub impl CardImpl of CardTrait {
         }
     }
 
-     fn card_value_ace_low(rank: CardRank) -> u8 {
+    fn card_value_ace_low(rank: CardRank) -> u8 {
         match rank {
-            CardRank::Ace => 1,       // Ace low for A-2-3-4-5
+            CardRank::Ace => 1, // Ace low for A-2-3-4-5
             _ => Self::card_value(rank) // Use normal values for everything else
         }
     }
@@ -213,7 +211,7 @@ pub impl CardImpl of CardTrait {
     fn is_normal_straight(cards: Span<Card>) -> bool {
         let mut values: Array<u8> = array![];
         let mut i = 0;
-        
+
         // Convert to normal card values
         while i < cards.len() {
             values.append(Self::card_value(*cards.at(i).rank));
@@ -222,7 +220,7 @@ pub impl CardImpl of CardTrait {
 
         // Sort the values
         let sorted_values = sort_values(values);
-        
+
         // Check if consecutive
         is_consecutive(sorted_values.span())
     }
@@ -243,7 +241,7 @@ pub impl CardImpl of CardTrait {
                 CardRank::Three => has_three = true,
                 CardRank::Four => has_four = true,
                 CardRank::Five => has_five = true,
-                _ => {}
+                _ => {},
             }
             i += 1;
         };
@@ -256,7 +254,7 @@ pub impl CardImpl of CardTrait {
         if Self::is_wheel_straight(cards) {
             return 5; // In A-2-3-4-5, the 5 is the "high" card
         }
-        
+
         // For normal straights, find the highest card
         let mut highest = 0;
         let mut i = 0;
@@ -268,41 +266,41 @@ pub impl CardImpl of CardTrait {
             i += 1;
         };
         highest
-    }    
-
+    }
 }
 
 fn sort_values(values: Array<u8>) -> Array<u8> {
     let mut sorted: Array<u8> = array![];
     let values_span = values.span();
-    
+
     // For each position in the result array
     let mut sorted_count = 0;
     while sorted_count < values.len() {
         let mut min_value = 255_u8; // Start with max possible value
         let mut min_found = false;
-        
+
         // Find the smallest value that we haven't used yet
         let mut i = 0;
         while i < values.len() {
             let current_value = *values_span.at(i);
-            
+
             // Check if this value is smaller than our current minimum
             // AND we haven't already added it to our sorted array
-            if current_value < min_value && !is_value_already_used(@sorted, current_value, sorted_count) {
+            if current_value < min_value
+                && !is_value_already_used(@sorted, current_value, sorted_count) {
                 min_value = current_value;
                 min_found = true;
             }
             i += 1;
         };
-        
+
         // Add the minimum value we found
         if min_found {
             sorted.append(min_value);
         }
         sorted_count += 1;
     };
-    
+
     sorted
 }
 
@@ -310,7 +308,7 @@ fn sort_values(values: Array<u8>) -> Array<u8> {
 fn is_value_already_used(sorted: @Array<u8>, value: u8, count: u32) -> bool {
     let mut times_used: u8 = 0;
     let mut times_in_original = 0;
-    
+
     // Count how many times this value appears in our sorted array so far
     let mut i = 0;
     while i < count {
@@ -319,7 +317,7 @@ fn is_value_already_used(sorted: @Array<u8>, value: u8, count: u32) -> bool {
         }
         i += 1;
     };
-    
+
     times_used > 0
 }
 
@@ -330,7 +328,7 @@ fn is_consecutive(values: Span<u8>) -> bool {
     if values.len() != 5 {
         return false;
     }
-    
+
     // Check for duplicates first
     let mut i = 0;
     while i < values.len() {
@@ -343,7 +341,7 @@ fn is_consecutive(values: Span<u8>) -> bool {
         };
         i += 1;
     };
-    
+
     // Now check if consecutive
     let mut k = 1;
     while k < values.len() {
@@ -457,7 +455,10 @@ mod tests {
             Card { suit: CardSuits::Clubs, rank: CardRank::King },
             Card { suit: CardSuits::Spades, rank: CardRank::Ace },
         ];
-        assert(CardImpl::is_normal_straight(broadway_straight.span()), 'Should detect broadway straight');
+        assert(
+            CardImpl::is_normal_straight(broadway_straight.span()),
+            'Should detect broadway straight',
+        );
 
         // Test 5-6-7-8-9 straight
         let mid_straight = array![
@@ -514,7 +515,9 @@ mod tests {
             Card { suit: CardSuits::Clubs, rank: CardRank::King },
             Card { suit: CardSuits::Spades, rank: CardRank::Ace },
         ];
-        assert(CardImpl::get_straight_high_card(broadway.span()) == 14, 'Broadway high should be Ace');
+        assert(
+            CardImpl::get_straight_high_card(broadway.span()) == 14, 'Broadway high should be Ace',
+        );
 
         // Test wheel straight high card
         let wheel = array![
@@ -534,7 +537,10 @@ mod tests {
             Card { suit: CardSuits::Clubs, rank: CardRank::Nine },
             Card { suit: CardSuits::Spades, rank: CardRank::Ten },
         ];
-        assert(CardImpl::get_straight_high_card(mid_straight.span()) == 10, 'Mid straight high should be 10');
+        assert(
+            CardImpl::get_straight_high_card(mid_straight.span()) == 10,
+            'Mid straight high should be 10',
+        );
     }
 
     #[test]
