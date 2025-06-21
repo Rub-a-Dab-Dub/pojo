@@ -9,7 +9,7 @@ pub struct CommunityCards {
     pub turn: u8,
     pub river: u8,
     // 0=none, 3=flop, 4=turn, 5=river
-    pub cards_dealt: u8 
+    pub cards_dealt: u8,
 }
 
 #[derive(Copy, Drop, Serde, Debug)]
@@ -19,7 +19,7 @@ pub struct GameDeck {
     pub table_id: u32,
     pub cards: Span<u8>, // Shuffled deck
     pub next_card_index: u8,
-    pub seed: u256
+    pub seed: u256,
 }
 
 #[derive(Copy, Drop, Serde, PartialEq)]

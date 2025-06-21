@@ -6,7 +6,6 @@ pub mod models {
     pub mod card;
     pub mod player;
     pub mod table;
-    pub mod game;
 }
 
 pub mod constants;

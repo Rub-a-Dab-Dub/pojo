@@ -16,7 +16,7 @@ struct Player {
     has_acted: bool,
     position: u8,
     // PlayerAction
-    last_action: felt252 
+    last_action: felt252,
 }
 
 #[derive(Copy, Drop, Serde, PartialEq, Introspect)]
@@ -334,7 +334,8 @@ pub impl PlayerImpl of PlayerTrait {
         }
 
         // If folded, should not be acting
-        if !*self.is_active && *self.has_acted {// This is actually valid - folded players have acted
+        if !*self.is_active
+            && *self.has_acted { // This is actually valid - folded players have acted
         }
 
         true
