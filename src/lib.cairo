@@ -1,5 +1,6 @@
 pub mod systems {
-    pub mod actions;
+    pub mod player;
+    pub mod table;
 }
 
 pub mod models {
@@ -11,5 +12,5 @@ pub mod models {
 pub mod constants;
 
 pub mod tests {
-    mod test_world;
+    mod test_table;
 }

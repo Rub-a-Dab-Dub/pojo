@@ -3,24 +3,24 @@ use poker_game::models::card::{Card, CardTrait, CardRank, CardSuits};
 
 #[derive(Copy, Drop, Serde, Debug)]
 #[dojo::model]
-struct Player {
+pub struct Player {
     #[key]
-    address: ContractAddress,
+    pub address: ContractAddress,
     #[key]
-    table_id: u32,
-    stack: u128,
-    current_bet: u128,
-    hole_card1: u8, // card index (0-51)
-    hole_card2: u8, // card index (0-51)
-    is_active: bool,
-    has_acted: bool,
-    position: u8,
+    pub table_id: u32,
+    pub stack: u128,
+    pub current_bet: u128,
+    pub hole_card1: u8, // card index (0-51)
+    pub hole_card2: u8, // card index (0-51)
+    pub is_active: bool,
+    pub has_acted: bool,
+    pub position: u8,
     // PlayerAction
-    last_action: felt252,
+    pub last_action: felt252,
 }
 
 #[derive(Copy, Drop, Serde, PartialEq, Introspect)]
-enum PlayerAction {
+pub enum PlayerAction {
     Check,
     Call,
     Raise,
@@ -28,7 +28,7 @@ enum PlayerAction {
     AllIn,
 }
 
-impl PlayerActionIntoFelt252 of Into<PlayerAction, felt252> {
+pub impl PlayerActionIntoFelt252 of Into<PlayerAction, felt252> {
     fn into(self: PlayerAction) -> felt252 {
         match self {
             PlayerAction::Check => 'CHECK',
@@ -40,7 +40,7 @@ impl PlayerActionIntoFelt252 of Into<PlayerAction, felt252> {
     }
 }
 
-impl Felt252TryIntoPlayerAction of TryInto<felt252, PlayerAction> {
+pub impl Felt252TryIntoPlayerAction of TryInto<felt252, PlayerAction> {
     fn try_into(self: felt252) -> Option<PlayerAction> {
         if self == 'CHECK' {
             Option::Some(PlayerAction::Check)

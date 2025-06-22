@@ -152,63 +152,58 @@ pub struct SidePot {
     pub eligible_players: Span<ContractAddress>,
 }
 
-// #[derive(Drop, starknet::Event)]
-// struct TableCreated {
-//     table_id: u32,
-//     creator: ContractAddress,
-//     big_blind: u128,
-//     max_players: u8,
-// }
+#[derive(Copy, Drop, Serde, Debug)]
+#[dojo::model]
+pub struct TableCount {
+    #[key]
+    pub id: felt252, // represents GAME_ID
+    pub count: u32,
+}
 
-// #[derive(Drop, starknet::Event)]
-// struct PlayerJoinedTable {
-//     table_id: u32,
-//     player: ContractAddress,
-//     position: u8,
-//     buy_in: u128,
-// }
+#[generate_trait]
+pub impl TableCountImpl of TableCountTrait {
+    fn get_next_table_id(ref self: TableCount) -> u32 {
+        let next_id = self.count + 1;
+        self.count = next_id;
+        next_id
+    }
+}
 
-// #[derive(Drop, starknet::Event)]
-// struct GameStarted {
-//     table_id: u32,
-//     game_number: u32,
-//     dealer_position: u8,
-//     players: Span<ContractAddress>,
-// }
+#[generate_trait]
+pub impl TablePlayersImpl of TablePlayersTrait {
+    fn add_player(ref self: TablePlayers, player: ContractAddress) {
+        let mut new_arr = array![];
 
-// #[derive(Drop, starknet::Event)]
-// struct PlayerActed {
-//     table_id: u32,
-//     game_number: u32,
-//     player: ContractAddress,
-//     action: felt252, // PlayerAction as felt252
-//     amount: u128,
-//     new_pot_total: u128,
-// }
+        let mut i = 0;
+        while i < self.player_count {
+            new_arr.append(*(self.players).at(i.into()));
+            i += 1;
+        };
+        new_arr.append(player);
 
-// #[derive(Drop, starknet::Event)]
-// struct CommunityCardsDealt {
-//     table_id: u32,
-//     game_number: u32,
-//     round: GameRound,
-//     cards: Span<u8>,
-// }
+        self.players = new_arr.span();
+        self.player_count += 1;
+    }
 
-// #[derive(Drop, starknet::Event)]
-// struct GameEnded {
-//     table_id: u32,
-//     game_number: u32,
-//     winners: Span<ContractAddress>,
-//     pot_amounts: Span<u128>,
-// }
+    fn is_player_at_table(table_players: @TablePlayers, player: ContractAddress) -> bool {
+        let mut res: bool = false;
 
-// #[derive(Drop, starknet::Event)]
-// struct RoundAdvanced {
-//     table_id: u32,
-//     game_number: u32,
-//     new_round: GameRound,
-//     reset_betting: bool,
-// }
+        if *table_players.player_count == 0 {
+            return false;
+        }
+
+        let mut i = 0;
+        while i < *table_players.player_count {
+            if *((*table_players.players).at(i.into())) == player {
+                res = true;
+                break;
+            }
+
+            i += 1;
+        };
+        res
+    }
+}
 
 #[generate_trait]
 pub impl TableImpl of TableTrait {

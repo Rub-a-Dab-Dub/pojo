@@ -544,18 +544,6 @@ mod tests {
     }
 
     #[test]
-    fn test_edge_cases() {
-        // Test invalid indices (should panic in real usage)
-        // Note: These tests would panic, so comment out for normal testing
-        // let invalid_card = CardImpl::from_index(52); // Should panic
-        // let invalid_card2 = CardImpl::from_index(255); // Should panic
-
-        // Test empty arrays (your functions should handle this gracefully)
-        let empty_cards: Array<Card> = array![];
-        // assert(!CardImpl::is_straight(empty_cards.span()), 'Empty should not be straight');
-    }
-
-    #[test]
     fn test_all_suits_conversion() {
         // Test that all suits convert correctly
         let spades: u8 = CardSuits::Spades.into();
