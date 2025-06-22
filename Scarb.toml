@@ -1,6 +1,6 @@
 [package]
 cairo-version = "=2.9.2"
-name = "poker_game"
+name = "pojo"
 version = "1.2.2"
 edition = "2024_07"
 
@@ -12,6 +12,7 @@ migrate = "sozo build && sozo migrate"                      # scarb run migrate
 
 [dependencies]
 dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.2.2" }
+origami_random = { git = "https://github.com/dojoengine/origami", tag = "v1.1.2" }
 
 [[target.starknet-contract]]
 build-external-contracts = ["dojo::world::world_contract::world"]

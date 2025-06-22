@@ -1,4 +1,4 @@
-use poker_game::models::table::{Table, TablePlayers};
+use pojo::models::table::{Table, TablePlayers};
 
 #[starknet::interface]
 pub trait ITableSystems<T> {
@@ -18,17 +18,16 @@ pub trait ITableSystems<T> {
     fn is_table_ready_to_start(self: @T, table_id: u32) -> bool;
 }
 
-// dojo decorator
 #[dojo::contract]
 pub mod table_systems {
     use super::*;
     use starknet::{ContractAddress, get_caller_address};
-    use poker_game::models::table::{
+    use pojo::models::table::{
         TableTrait, TableCount, TableCountImpl, TableCountTrait, TablePlayers, Table,
         TablePlayersTrait, GameStatus,
     };
-    use poker_game::models::player::{PlayerTrait, Player};
-    use poker_game::constants::{GAME_ID};
+    use pojo::models::player::{PlayerTrait, Player};
+    use pojo::constants::{GAME_ID};
 
     use dojo::model::{ModelStorage};
     use dojo::event::EventStorage;
@@ -257,7 +256,7 @@ pub mod table_systems {
     #[generate_trait]
     impl InternalImpl of InternalTrait {
         fn world_default(self: @ContractState) -> dojo::world::WorldStorage {
-            self.world(@"poker_game")
+            self.world(@"pojo")
         }
 
         fn remove_player(

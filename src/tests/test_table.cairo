@@ -8,21 +8,21 @@ mod table_system_tests {
     };
     use starknet::{contract_address_const, ContractAddress, testing};
 
-    use poker_game::constants::GAME_ID;
-    use poker_game::systems::table::{
+    use pojo::constants::GAME_ID;
+    use pojo::systems::table::{
         table_systems, ITableSystems, ITableSystemsDispatcher, ITableSystemsDispatcherTrait,
     };
-    use poker_game::models::table::{
+    use pojo::models::table::{
         TableTrait, m_TableCount, TableCountImpl, TableCountTrait, m_TablePlayers, m_Table,
         TablePlayersTrait, GameStatus, TableCount, TablePlayers, m_GameDeck, m_CommunityCards,
         Table,
     };
-    use poker_game::models::player::{PlayerTrait, Player, m_Player};
+    use pojo::models::player::{PlayerTrait, Player, m_Player};
 
 
     fn namespace_def() -> NamespaceDef {
         let ndef = NamespaceDef {
-            namespace: "poker_game",
+            namespace: "pojo",
             resources: [
                 TestResource::Model(m_Table::TEST_CLASS_HASH),
                 TestResource::Model(m_TableCount::TEST_CLASS_HASH),
@@ -45,8 +45,8 @@ mod table_system_tests {
 
     fn contract_defs() -> Span<ContractDef> {
         [
-            ContractDefTrait::new(@"poker_game", @"table_systems")
-                .with_writer_of([dojo::utils::bytearray_hash(@"poker_game")].span())
+            ContractDefTrait::new(@"pojo", @"table_systems")
+                .with_writer_of([dojo::utils::bytearray_hash(@"pojo")].span())
         ]
             .span()
     }

@@ -1,5 +1,5 @@
 use starknet::{ContractAddress};
-use poker_game::models::card::{Card, CardTrait, CardRank, CardSuits};
+use pojo::models::card::{Card, CardTrait, CardRank, CardSuits};
 
 #[derive(Copy, Drop, Serde, Debug)]
 #[dojo::model]

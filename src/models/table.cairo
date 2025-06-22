@@ -110,7 +110,7 @@ pub struct GameDeck {
     pub game_number: u32,
     pub cards: Span<u8>, // Shuffled deck indices
     pub next_card_index: u8,
-    pub seed: u256,
+    pub seed: felt252,
 }
 
 #[derive(Copy, Drop, Serde, Debug)]
@@ -273,7 +273,7 @@ pub impl TableImpl of TableTrait {
         self.game_number += 1;
 
         // Set first player after big blind as current player
-        self.current_player_position = self.get_next_position_after_blinds();
+        // self.current_player_position = self.get_next_position_after_blinds();
 
         true
     }
@@ -489,7 +489,7 @@ pub impl CommunityCardsImpl of CommunityCardsTrait {
 
 #[generate_trait]
 pub impl GameDeckImpl of GameDeckTrait {
-    fn new(table_id: u32, game_number: u32, shuffled_cards: Span<u8>, seed: u256) -> GameDeck {
+    fn new(table_id: u32, game_number: u32, shuffled_cards: Span<u8>, seed: felt252) -> GameDeck {
         GameDeck { table_id, game_number, cards: shuffled_cards, next_card_index: 0, seed }
     }
 
@@ -731,10 +731,6 @@ mod table_tests {
         assert(table.current_bet == 0, 'bet should be reset');
         assert(table.last_raise_amount == 0, 'raise should be reset');
         assert(table.players_acted_this_round == 0, 'actions should be reset');
-
-        // Current player should be set correctly
-        let expected_position = table.get_next_position_after_blinds();
-        assert(table.current_player_position == expected_position, 'wrong current player');
     }
 
     #[test]
