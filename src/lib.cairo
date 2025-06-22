@@ -1,5 +1,4 @@
 pub mod systems {
-    pub mod player;
     pub mod table;
     pub mod game;
 }

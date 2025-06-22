@@ -443,7 +443,6 @@ pub mod game_systems {
 
             // This would implement hand evaluation logic
             assert(table.status == GameStatus::Showdown.into(), 'Not in showdown');
-
             // TODO: Implement proper hand evaluation
         }
 
